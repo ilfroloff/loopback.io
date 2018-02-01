@@ -15,13 +15,13 @@ children:
   url: Installation.html
   output: 'web, pdf'
 
-- title: 'Getting started'
-  url: Getting-started.html
+- title: 'Tutorial'
+  url: Tutorial.html
   output: 'web, pdf'
   children:
 
-  - title: 'Examples and tutorials'
-    url: Examples-and-tutorials.html
+  - title: 'More examples and tutorials'
+    url: More-examples-and-tutorials.html
     output: 'web, pdf'
 
 - title: 'Key concepts'
