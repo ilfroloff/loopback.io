@@ -1,7 +1,7 @@
 ---
 title: "Tutorial"
 lang: en
-layout: loopback4-readme
+layout: readme
 source: example-getting-started 
 keywords: LoopBack, LoopBack 4 
 tags: [tutorial, getting-started]
