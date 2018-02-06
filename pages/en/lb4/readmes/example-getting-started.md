@@ -1,10 +1,10 @@
 ## Making A Todo App
 
 {% include note.html content="
-  This tutorial is a work-in-progress!
-  If you encounter any problems, please create an issue on the
-  [loopback-next](https://github.com/strongloop/loopback-next) repository.
-  " %}
+This tutorial is a work-in-progress!
+If you encounter any problems, please create an issue on the
+[loopback-next](https://github.com/strongloop/loopback-next) repository.
+" %}
 
 Let's get started building our very first application using LoopBack 4!
 We're going to build a Todo application that provides a CRUD API for Todo lists!
@@ -12,13 +12,15 @@ We're going to build a Todo application that provides a CRUD API for Todo lists!
 ## Prerequisites
 
 Before we can begin, you'll need to make sure you have some things installed:
-- [Node.js](https://nodejs.org/en/) at v6.x or greater
+
+* [Node.js](https://nodejs.org/en/) at v6.x or greater
 
 Additionally, this tutorial assumes that you are comfortable with
 certain technologies, languages and concepts.
-- JavaScript (ES6)
-- [npm](https://www.npmjs.com/)
-- [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)
+
+* JavaScript (ES6)
+* [npm](https://www.npmjs.com/)
+* [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)
 
 ## The Final Result
 
@@ -91,21 +93,13 @@ the `RepositoryMixin`:
 {% include code-caption.html content="src/application.ts" %}
 
 ```ts
-import {Application, ApplicationConfig} from '@loopback/core';
-import {RestComponent} from '@loopback/rest';
-import {PingController} from './controllers/ping-controller';
-import {Class, Repository, RepositoryMixin} from '@loopback/repository';
+import { ApplicationConfig } from '@loopback/core';
+import { RestApplication } from '@loopback/rest';
+import { PingController } from './controllers/ping-controller';
+import { Class, Repository, RepositoryMixin } from '@loopback/repository';
 
-export class TodoApplication extends RepositoryMixin(Application) {
+export class TodoApplication extends RepositoryMixin(RestApplication) {
   constructor(options?: ApplicationConfig) {
-    // Allow options to replace the defined components array, if desired.
-    options = Object.assign(
-      {},
-      {
-        components: [RestComponent],
-      },
-      options,
-    );
     super(options);
     this.setupControllers();
   }
@@ -117,19 +111,22 @@ export class TodoApplication extends RepositoryMixin(Application) {
 ```
 
 ### Building the Todo model
+
 The Todo model will be the object we use both as a Data Transfer Object (DTO) on
 the controller, and as a LoopBack model for the Legacy Juggler implementation.
 
 Create another folder in `src` called `repositories` and inside of that folder,
 create two files:
-- `index.ts`
-- `todo.repository.ts`
 
->**NOTE:**
-The `index.ts` file is an export helper file; this pattern is a huge time-saver
-as the number of models in your project grows, because it allows you to point
-to the _directory_ when attempting to import types from a file within the target
-folder. We will use this concept throughout the tutorial!
+* `index.ts`
+* `todo.repository.ts`
+
+> **NOTE:**
+> The `index.ts` file is an export helper file; this pattern is a huge time-saver
+> as the number of models in your project grows, because it allows you to point
+> to the _directory_ when attempting to import types from a file within the target
+> folder. We will use this concept throughout the tutorial!
+
 ```ts
 // in src/models/index.ts
 export * from './foo.model';
@@ -139,19 +136,20 @@ export * from './baz.model';
 // elsewhere...
 
 // with index.ts
-import {Foo, Bar, Baz} from './models';
+import { Foo, Bar, Baz } from './models';
 // ...and without index.ts
-import {Foo} from './models/foo.model';
-import {Bar} from './models/bar.model';
-import {Baz} from './models/baz.model';
+import { Foo } from './models/foo.model';
+import { Bar } from './models/bar.model';
+import { Baz } from './models/baz.model';
 ```
 
 In our Todo model, we'll create a basic representation of what would go in
 a Todo list. Our model will include:
-- a unique id
-- a title
-- a description that details what the todo is all about
-- a boolean flag for whether or not we've completed the task.
+
+* a unique id
+* a title
+* a description that details what the todo is all about
+* a boolean flag for whether or not we've completed the task.
 
 For the Legacy Juggler to understand how to work with our model class, it
 will need to extend the `Entity` type, as well as provide an override for
@@ -165,8 +163,8 @@ Todo model on your app's OpenAPI endpoints.
 {% include code-caption.html content="src/models/todo.model.ts" %}
 
 ```ts
-import {Entity, property, model} from '@loopback/repository';
-import {SchemaObject} from '@loopback/openapi-spec';
+import { Entity, property, model } from '@loopback/repository';
+import { SchemaObject } from '@loopback/openapi-spec';
 
 @model()
 export class Todo extends Entity {
@@ -217,11 +215,12 @@ export const TodoSchema: SchemaObject = {
       description: 'Whether or not the Todo entry is complete.'
     }
   },
-  required: ['title'],
+  required: ['title']
 };
 ```
 
 ### Building a Datasource
+
 Before we can begin constructing controllers and repositories for our
 application, we need to define our datasource.
 
@@ -260,8 +259,9 @@ construct our TodoRepository definition.
 
 Create another folder in `src` called `repositories` and inside of that folder,
 create two files:
-- `index.ts` (our export helper)
-- `todo.repository.ts`
+
+* `index.ts` (our export helper)
+* `todo.repository.ts`
 
 Our TodoRepository will contain a small base class that uses the
 `DefaultCrudRepository` class from `@loopback/repository` and will define the
@@ -290,8 +290,9 @@ export class TodoRepository extends DefaultCrudRepository<
 
 Now, we'll create a controller to handle our Todo routes. Create the
 `src/controllers` directory and two files inside:
-- `index.ts` (export helper)
-- `todo.controller.ts`
+
+* `index.ts` (export helper)
+* `todo.controller.ts`
 
 In addition to creating the CRUD methods themselves, we'll also be adding
 decorators that setup the routing as well as the expected parameters of
@@ -300,14 +301,14 @@ incoming requests.
 {% include code-caption.html content="src/controllers/todo.controller.ts" %}
 
 ```ts
-import {post, param, get, put, patch, del, HttpErrors} from '@loopback/rest';
-import {TodoSchema, Todo} from '../models';
-import {repository} from '@loopback/repository';
-import {TodoRepository} from '../repositories/index';
+import { post, param, get, put, patch, del, HttpErrors } from '@loopback/rest';
+import { TodoSchema, Todo } from '../models';
+import { repository } from '@loopback/repository';
+import { TodoRepository } from '../repositories/index';
 
 export class TodoController {
   constructor(
-    @repository(TodoRepository.name) protected todoRepo: TodoRepository,
+    @repository(TodoRepository.name) protected todoRepo: TodoRepository
   ) {}
   @post('/todo')
   @param.body('todo', TodoSchema)
@@ -363,28 +364,20 @@ as adding in our new controller binding.
 {% include code-caption.html content="src/application.ts" %}
 
 ```ts
-import {Application, ApplicationConfig} from '@loopback/core';
-import {RestComponent} from '@loopback/rest';
-import {TodoController, PingController} from './controllers';
+import { ApplicationConfig } from '@loopback/core';
+import { RestApplication } from '@loopback/rest';
+import { TodoController, PingController } from './controllers';
 import {
   Class,
   Repository,
   RepositoryMixin,
-  DataSourceConstructor,
+  DataSourceConstructor
 } from '@loopback/repository';
-import {db} from './datasources/db.datasource';
-import {TodoRepository} from './repositories';
+import { db } from './datasources/db.datasource';
+import { TodoRepository } from './repositories';
 
-export class TodoApplication extends RepositoryMixin(Application) {
+export class TodoApplication extends RepositoryMixin(RestApplication) {
   constructor(options?: ApplicationConfig) {
-    // Allow options to replace the defined components array, if desired.
-    options = Object.assign(
-      {},
-      {
-        components: [RestComponent],
-      },
-      options,
-    );
     super(options);
     this.setupControllers();
     this.setupRepositories();
@@ -409,16 +402,20 @@ export class TodoApplication extends RepositoryMixin(Application) {
 ```
 
 ### Try it out
+
 Now that your app is ready to go, try it out with your favourite REST client!
 Start the app (`npm start`) and then make some REST requests:
-- `POST /todo` with a body of `{ "title": "get the milk" }`
-- `GET /todo/1` and see if you get your Todo object back.
-- `PATCH /todo/1` with a body of `{ "desc": "need milk for cereal" }`
+
+* `POST /todo` with a body of `{ "title": "get the milk" }`
+* `GET /todo/1` and see if you get your Todo object back.
+* `PATCH /todo/1` with a body of `{ "desc": "need milk for cereal" }`
 
 ### Stuck?
+
 Check out our [Gitter channel](https://gitter.im/strongloop/loopback) and ask
 for help with this tutorial!
 
 ### Bugs/Feedback
+
 Open an issue in [loopback-next](https://github.com/strongloop/loopback-next)
 and we'll take a look!
