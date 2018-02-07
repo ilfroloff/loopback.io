@@ -27,7 +27,8 @@ builtin/in-memory storage mechanism).
 times.
 
 LoopBack's context system allows an unlimited amount of Context instances,
-each of which may have a parent Context.
+each of which may have a parent Context. Each context has a name, which can
+be provided or generated as a UUID at construction time.
 
 Typically, however, an application will have three "levels" of context: application-level, server-level and request-level.
 
